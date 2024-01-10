@@ -18,7 +18,7 @@ class Agent:
     def init_Q(self):
         for state in range(self.n_states):
             for action in range(self.n_actions):
-                self.Q[(state, action)] = 0.0
+                self.Q[(state, action)] = 1.0
         # self.Q[(self.n_states-1, self.n_actions-1)] = 1.0
         print(self.Q)
     # def get_action(self,state, value):
