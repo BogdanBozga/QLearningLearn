@@ -1,7 +1,7 @@
 import numpy as np
 
 
-class AgentQFL:
+class AgentDQFL:
     def __init__(self, lr, gamma, n_actions, n_states, eps_start, eps_end, eps_dec):
         self.lr = lr
         self.gamma = gamma
@@ -12,14 +12,16 @@ class AgentQFL:
         self.eps_end = eps_end
         self.eps_dec = eps_dec
 
-        self.Q = {}
+        self.Qa = {}
+        self.Qb = {}
         self.init_Q()
 
     def init_Q(self):
         for state in range(self.n_states):
             for action in range(self.n_actions):
-                self.Q[(state, action)] = 0.0
-        print(self.Q)
+                self.Qa[(state, action)] = 0.0
+                self.Qb[(state, action)] = 0.0
+        print(self.Qa)
 
     def choose_action(self, state):
         if np.random.random() < self.epsilon:
@@ -28,7 +30,10 @@ class AgentQFL:
             action = 0
             value = 0
             for a in range(self.n_actions):
-                value_l = self.Q[(state, a)]
+                if np.random.random() < 0.5:
+                    value_l = self.Qa[(state, a)]
+                else:
+                    value_l = self.Qb[(state, a)]
                 if value < value_l:
                     value = value_l
                     action = a
@@ -40,12 +45,19 @@ class AgentQFL:
     def learn(self, state, action, reward, new_state):
         a_max = 0
         value = 0
+        updateaA = True if np.random.random() < 0.5 else False
         for a in range(self.n_actions):
-            value_l = self.Q[(new_state, a)]
+            if updateaA:
+                value_l = self.Qa[(new_state, a)]
+            else:
+                value_l = self.Qb[(new_state, a)]
             if value < value_l:
                 value = value_l
                 a_max = a
-
-        self.Q[(state, action)] += self.lr*(reward+self.gamma*self.Q[new_state, a_max] - self.Q[(state, action)])
-
+        if updateaA:
+            self.Qa[(state, action)] += self.lr*(
+                        reward+self.gamma*self.Qa[new_state, a_max] - self.Qa[(state, action)])
+        else:
+            self.Qb[(state, action)] += self.lr * (
+                        reward + self.gamma * self.Qb[new_state, a_max] - self.Qb[(state, action)])
         self.decrease_epsilon()
