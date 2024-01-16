@@ -46,6 +46,7 @@ if __name__ == "__main__":
     run_agent(agentQ, env, 1000000)
     run_agent(agentDQ, env, 1000000)
 
+
     # scores = []
     # win_pcts = []
     # nr_steps_l = []
