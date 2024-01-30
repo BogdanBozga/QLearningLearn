@@ -5,11 +5,10 @@ from QLearnFL import AgentQFL
 from DQLearnFL import AgentDQFL
 from NQLeanFL import AgentNQFL
 
-def run_agent(env,nr_games, Qagent, img_name,nr_qs=2):
+def run_agent(env,n_games, Qagent, img_name):
     scores = []
     win_pcts = []
     win_nr = []
-    n_games = nr_games * (nr_qs // 2)
     print('reset', env.reset())
     print('step', env.step(1))
     for i in range(n_games):
@@ -44,4 +43,4 @@ if __name__ == "__main__":
     agentNQ = AgentNQFL(lr=0.1, gamma=0.95, eps_start=1.0, eps_end=0.01, eps_dec=0.999999, n_actions=4, n_states=8*8,nq=nr_qs)
 
     img_name = "QL-FrozenLake.png"
-    run_agent(env, 10000, agentQ, img_name,nr_qs=nr_qs)
+    run_agent(env, 10000*(nr_qs//2), agentQ, img_name)
